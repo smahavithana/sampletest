@@ -1,27 +1,27 @@
 package sites;
 
 import com.Job;
+import util.XMLHelper;
+import util.Helper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import util.DateHelper;
-import util.Helper;
-import util.XMLHelper;
+
 
 import java.io.IOException;
 
 /* *
  * Created by Sampath on 17/02/2017.
  */
-public class CWJobs_new {
-
-    String site_url = "https://www.cwjobs.co.uk/jobs/qa?page=";
-    DateHelper dateHelper = new DateHelper();
+public class CWJobs {
 
     public static void getJobs() throws Exception {
 
-        
+        DateHelper dateHelper = new DateHelper();
+
+        String site = "https://www.cwjobs.co.uk/jobs/qa?page=";
         int resultsPerPage = 10;
         int pages = 60;
         int i = 0;
@@ -31,7 +31,7 @@ public class CWJobs_new {
         Job myJobs[] = new Job[noOfJobs];
 
         for(int x = 1; x<=pages; x++){
-            String url = site_url + x;
+            String url = site + x;
 
             try {
                 Document doc = Jsoup.connect(url).get();
@@ -75,19 +75,14 @@ public class CWJobs_new {
                     }
                 }
 
-                //XMLHelper.Write(myJobs);
+                //XMLHelper.writeFromArray(myJobs);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        XMLHelper.Write("cwjobs", myJobs);
-    }
-
-    public static int getJobCount(){
-
-        return 2;
+        XMLHelper.writeFromArray("cwjobs", myJobs);
     }
 
     public static String getJobDescription(String jobDetailsLink) throws Exception {

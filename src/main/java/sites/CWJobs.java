@@ -1,37 +1,42 @@
 package sites;
 
 import com.Job;
-import util.XMLHelper;
-import util.Helper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import util.DateHelper;
-
+import util.Helper;
+import util.XMLHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /* *
  * Created by Sampath on 17/02/2017.
  */
-public class CWJobs {
+public class CWJobs_new {
+
+
+    static DateHelper dateHelper = new DateHelper();
+    static String jobExpiryDate = "1911772800";
+    static String site_url = "https://www.cwjobs.co.uk/jobs/qa?page=";
 
     public static void getJobs() throws Exception {
 
-        DateHelper dateHelper = new DateHelper();
-
-        String site = "https://www.cwjobs.co.uk/jobs/qa?page=";
         int resultsPerPage = 10;
-        int pages = 60;
-        int i = 0;
-        int noOfJobs = resultsPerPage*pages;
-        String jobExpiryDate = "1911772800";
+        int noOfJobs = getJobCount();
+       // int pages = noOfJobs/resultsPerPage;
+        int pages = 1;
 
+        int i = 0;
         Job myJobs[] = new Job[noOfJobs];
 
+        ArrayList<Job> jobList = new ArrayList<Job>();
+
         for(int x = 1; x<=pages; x++){
-            String url = site + x;
+            String url = site_url + x;
 
             try {
                 Document doc = Jsoup.connect(url).get();
@@ -72,20 +77,37 @@ public class CWJobs {
                         j.setLong_description(getJobDescription(job_url));
 
                         myJobs[i++] = j;
+
+                        jobList.add(j);
                     }
                 }
 
-                //XMLHelper.Write(myJobs);
+                //XMLHelper.writeFromArray(myJobs);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        XMLHelper.Write("cwjobs", myJobs);
+        //XMLHelper.writeFromArray("cwjobs", myJobs);
+        XMLHelper.writeFromArrayList("cwjobs", jobList);
     }
 
-    public static String getJobDescription(String jobDetailsLink) throws Exception {
+    private static int getJobCount(){
+        int no_of_jobs = 1;
+
+        try {
+            Document doc = Jsoup.connect(site_url).get();
+            Elements ele = doc.select("div.page-title");
+            no_of_jobs = Integer.parseInt(ele.select("span").text()) ;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return no_of_jobs;
+    }
+
+    private static String getJobDescription(String jobDetailsLink) throws Exception {
 
         Document doc = Jsoup.connect(jobDetailsLink).get();
         return doc.select("div.job-description").outerHtml();

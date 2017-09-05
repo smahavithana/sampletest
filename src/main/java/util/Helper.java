@@ -61,7 +61,27 @@ public class Helper {
     public static void removeNonQAJobs(){
 
     }
+    
+ public static void getIntSalary(String salary){
 
+        String sal = salary.toLowerCase().replaceAll("[a-z]","");
+        sal = sal.substring(sal.indexOf("£"));
+
+        if(sal.contains("+")){
+            sal = sal.substring(0,sal.indexOf("+"));
+        }
+
+        sal = sal.replaceAll("-","").replaceAll(",","").replaceAll(" ","");
+
+        if((sal.length()-sal.replaceAll("£","").length())>1){
+            sal = sal.substring(0,sal.lastIndexOf("£"));
+        }
+
+        System.out.printf("My New String is: " + sal);
+        //int myInt = Integer.valueOf(salary.replaceAll("[^0-9]", ""));
+
+        //return myInt;
+    }
 
     public static String getJobDescription(String jobDetailsLink) throws Exception{
 
